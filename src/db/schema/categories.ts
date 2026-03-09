@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 
-export const catagories = pgTable("categories", {
+export const categories = pgTable("categories", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text('name').notNull(),
     deletedAt: timestamp("deleted_at"),
@@ -9,5 +9,5 @@ export const catagories = pgTable("categories", {
 
 });
 
-export type Category = typeof catagories.$inferSelect;
-export type NewCategory = typeof catagories.$inferInsert;
+export type Category = typeof categories.$inferSelect;
+export type NewCategory = typeof categories.$inferInsert;

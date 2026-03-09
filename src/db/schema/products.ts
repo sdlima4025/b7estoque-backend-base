@@ -1,5 +1,6 @@
 import { integer, text, uuid, pgEnum, pgTable, timestamp,  numeric } from "drizzle-orm/pg-core";
-import { catagories } from "./categories";
+import { categories } from "./categories";
+
 
 
 export const unitType = pgEnum("unit_type", [ "kg", "g", "l", "ml", "un" ]);
@@ -7,7 +8,7 @@ export const unitType = pgEnum("unit_type", [ "kg", "g", "l", "ml", "un" ]);
 export const products = pgTable("products", {
     id: uuid("id").primaryKey().defaultRandom(),
     name: text('name').notNull(),
-    categoryId: uuid("category_id").notNull().references(() => catagories.id),
+    categoryId: uuid("category_id").notNull().references(() => categories.id),
     unitPrice:integer("unit_price").notNull(),
     unitType: unitType("unit_type").notNull().default("un"),
     quantity: numeric("quantity").notNull().default('0'),
