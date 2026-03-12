@@ -1,5 +1,5 @@
 {
-  "name": "b7estoque-backend",
+  "name": "sdlima-estoque-backend",
   "version": "1.0.0",
   "main": "dist/server.js",
   "type": "module",
@@ -12,11 +12,12 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
-  "author": "",
+  "author": "sdlima",
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
+    "crypto": "^1.0.1",
     "drizzle-orm": "^0.45.1",
     "express": "^5.2.1",
     "multer": "^2.0.2",

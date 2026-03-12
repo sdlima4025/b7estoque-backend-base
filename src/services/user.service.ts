@@ -3,6 +3,28 @@ import { db } from '../db/connection';
 import { NewUser, User, users } from '../db/schema';
 import bcrypt from 'bcrypt';
 import { AppError } from '../utilis/apperror';
+import crypto from 'crypto';
+
+
+export const login = async ( email: string, password: string ) => {
+    const user = await getUserByEmail(email);
+    if (!user) return null;
+
+    const isPasswordValid = await verifyPassword(password, user.password);
+    if (!isPasswordValid) return null;
+
+    const  token = crypto.randomBytes(32).toString('hex');
+
+    await db 
+    .update(users)
+    .set({ token, updatedAt: new Date() })
+    .where(eq(users.id, user.id));
+
+    const userFormatted = formatUser(user);
+    return { ...userFormatted, token };
+
+}
+
 
 export const createUser = async ( data: NewUser ) => {
     // 1. Verificar se o email já existe
@@ -43,6 +65,11 @@ export const getUserByEmail = async ( email: string ) => {
 export const hashPassword = async ( password: string ) => { 
     return bcrypt.hash(password, 10);
 }
+
+export const verifyPassword = async ( password: string, hash: string ) => {
+    return bcrypt.compare(password, hash);
+}
+
 
 export const formatUser = (user: User) => {
     const { password, ...userWithoutPassword } = user;
