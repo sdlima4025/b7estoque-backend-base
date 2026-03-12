@@ -1,8 +1,10 @@
 import { RequestHandler } from "express";
 import { createUserSchema } from "../validators/user.validators";
+import * as userService from '../services/user.service';
+
 
 export const createUser: RequestHandler = async (req, res) => {
     const data = createUserSchema.parse(req.body);
-    // TODO: Implementar a lógica para criar o usuário no banco de dados
+    const user = await userService.createUser(data);
     res.status(201).json({ error: null, data: user });
 }
