@@ -88,8 +88,3 @@ export const formatUser = (user: User) => {
     return userWithoutPassword;
 }
 
-
-
-// export function logout(token: string) {
-//     throw new Error("Function not implemented.");
-// }
