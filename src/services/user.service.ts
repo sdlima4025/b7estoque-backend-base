@@ -25,6 +25,13 @@ export const login = async ( email: string, password: string ) => {
 
 }
 
+export const logout = async (token: string) => {
+    await db 
+    .update(users)
+    .set({ token: null, updatedAt: new Date() })
+    .where(eq(users.token, token));
+}
+
 
 export const createUser = async ( data: NewUser ) => {
     // 1. Verificar se o email já existe
@@ -82,3 +89,7 @@ export const formatUser = (user: User) => {
 }
 
 
+
+// export function logout(token: string) {
+//     throw new Error("Function not implemented.");
+// }
