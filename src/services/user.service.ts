@@ -50,12 +50,22 @@ export const createUser = async ( data: NewUser ) => {
     const result = await db.insert(users).values(newUser).returning();
     const user = result[0];
 
-
-    
     return formatUser(user);
     }
 
-// Helper Functions
+    export const validateToken = async (token:string) => {
+        const result = await db 
+        .select()
+        .from(users)
+        .where(eq(users.token, token))
+        .limit(1);
+    
+        const user = result[0];
+        if (!user || user.deletedAt) return null;
+        return user;
+    }
+
+
 export const getUserByEmail = async ( email: string ) => {
     const result = await db 
     .select()
