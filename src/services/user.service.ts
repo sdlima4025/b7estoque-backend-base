@@ -6,19 +6,19 @@ import { AppError } from '../utilis/apperror';
 import crypto from 'crypto';
 
 
-export const login = async ( email: string, password: string ) => {
+export const login = async (email: string, password: string) => {
     const user = await getUserByEmail(email);
     if (!user) return null;
 
     const isPasswordValid = await verifyPassword(password, user.password);
     if (!isPasswordValid) return null;
 
-    const  token = crypto.randomBytes(32).toString('hex');
+    const token = crypto.randomBytes(32).toString('hex');
 
-    await db 
-    .update(users)
-    .set({ token, updatedAt: new Date() })
-    .where(eq(users.id, user.id));
+    await db
+        .update(users)
+        .set({ token, updatedAt: new Date() })
+        .where(eq(users.id, user.id));
 
     const userFormatted = formatUser(user);
     return { ...userFormatted, token };
@@ -26,14 +26,14 @@ export const login = async ( email: string, password: string ) => {
 }
 
 export const logout = async (token: string) => {
-    await db 
-    .update(users)
-    .set({ token: null, updatedAt: new Date() })
-    .where(eq(users.token, token));
+    await db
+        .update(users)
+        .set({ token: null, updatedAt: new Date() })
+        .where(eq(users.token, token));
 }
 
 
-export const createUser = async ( data: NewUser ) => {
+export const createUser = async (data: NewUser) => {
     // 1. Verificar se o email já existe
     const existingUser = await getUserByEmail(data.email);
     if (existingUser) {
@@ -42,7 +42,7 @@ export const createUser = async ( data: NewUser ) => {
 
     const hashedPassword = await hashPassword(data.password);
 
-    
+
     const newUser: NewUser = {
         ...data,
         password: hashedPassword,
@@ -51,39 +51,55 @@ export const createUser = async ( data: NewUser ) => {
     const user = result[0];
 
     return formatUser(user);
-    }
+}
 
-    export const validateToken = async (token:string) => {
-        const result = await db 
+export const validateToken = async (token: string) => {
+    const result = await db
         .select()
         .from(users)
         .where(eq(users.token, token))
         .limit(1);
-    
-        const user = result[0];
-        if (!user || user.deletedAt) return null;
-        return user;
-    }
 
+    const user = result[0];
+    if (!user || user.deletedAt) return null;
+    return user;
+}
 
-export const getUserByEmail = async ( email: string ) => {
-    const result = await db 
-    .select()
-    .from(users)
-    .where(eq(users.email, email))
-    .limit(1);
+export const getUserById = async (id: string) => {
+    const result = await db
+        .select()
+        .from(users)
+        .where(eq(users.id, id))
+        .limit(1);
 
     const user = result[0];
     if (!user || user.deletedAt) return null;
     return user;
 
 }
+export const getUserByEmail = async (email: string) => {
+    const result = await db
+        .select()
+        .from(users)
+        .where(eq(users.email, email))
+        .limit(1);
 
-export const hashPassword = async ( password: string ) => { 
+    const user = result[0];
+    if (!user || user.deletedAt) return null;
+    return user;
+}
+
+export const getUserByIdPublic = async (id: string) => {
+    const user = await getUserById(id);
+    if (!user) return null;
+    return formatUser(user);
+}
+
+export const hashPassword = async (password: string) => {
     return bcrypt.hash(password, 10);
 }
 
-export const verifyPassword = async ( password: string, hash: string ) => {
+export const verifyPassword = async (password: string, hash: string) => {
     return bcrypt.compare(password, hash);
 }
 
@@ -91,10 +107,11 @@ export const verifyPassword = async ( password: string, hash: string ) => {
 export const formatUser = (user: User) => {
     const { password, ...userWithoutPassword } = user;
 
-    if(!userWithoutPassword.avatar) {
+    if (!userWithoutPassword.avatar) {
         userWithoutPassword.avatar = `${process.env.BASE_URL}/static/avatars/${userWithoutPassword.avatar}`;
     }
 
-    return userWithoutPassword;
-}
+    const { id, name, email, avatar, isAdmin } = userWithoutPassword;
 
+    return { id, name, email, avatar, isAdmin };
+}

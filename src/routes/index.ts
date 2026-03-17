@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import userRoutes from './user.routes';
 import authRoutes from './auth.routes';
 import { authMiddleware } from '../middlewares/auth.midlleware';
+
 const router = Router();
 
 router.get('/ping', (req: Request, res: Response) => {
