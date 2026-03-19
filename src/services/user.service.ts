@@ -1,9 +1,10 @@
-import { eq } from 'drizzle-orm';
+import { eq, is, isNull } from 'drizzle-orm';
 import { db } from '../db/connection';
 import { NewUser, User, users } from '../db/schema';
 import bcrypt from 'bcrypt';
 import { AppError } from '../utilis/apperror';
 import crypto from 'crypto';
+import { off } from 'process';
 
 
 export const login = async (email: string, password: string) => {
@@ -51,6 +52,17 @@ export const createUser = async (data: NewUser) => {
     const user = result[0];
 
     return formatUser(user);
+}
+
+export const listUsers = async (offset: number = 0, limit: number = 10) => {
+    const userList = await db
+        .select()
+        .from(users)
+        .where(isNull(users.deletedAt))
+        .offset(offset)
+        .limit(limit);
+
+    return userList.map(formatUser);
 }
 
 export const validateToken = async (token: string) => {

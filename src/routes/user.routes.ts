@@ -6,5 +6,8 @@ const router = Router();
 // POST/api/users - Criar um novo usuário
 router.post('/', userController.createUser);
 
+// GET/api/users/me - Obter os dados do usuário autenticado
+router.get('/', userController.listUsers);
+
 export default router;
 
