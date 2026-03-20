@@ -9,5 +9,8 @@ router.post('/', userController.createUser);
 // GET/api/users/me - Obter os dados do usuário autenticado
 router.get('/', userController.listUsers);
 
+// GET/api/users/:id - Obter um usuário pelo ID
+router.get('/:id', userController.getUser);
+
 export default router;
 
